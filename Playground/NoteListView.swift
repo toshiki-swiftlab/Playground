@@ -14,6 +14,7 @@ struct NoteListView: View {
                 ForEach(notes, id: \.objectID) { note in
                     Text(note.content ?? "")
                 }
+                .onDelete(perform: deleteNote)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -47,6 +48,21 @@ extension NoteListView {
             try viewContext.save()
         } catch {
             print("Error saving managed object context: \(error)")
+        }
+    }
+    
+    func deleteNote(at offsets: IndexSet) {
+        for index in offsets {
+            let note = notes[index]
+            // ここで CoreData から削除
+            viewContext.delete(note)
+        }
+
+        do {
+            try viewContext.save()
+        } catch {
+            // エラー処理
+            print("削除に失敗しました: \(error)")
         }
     }
 }
