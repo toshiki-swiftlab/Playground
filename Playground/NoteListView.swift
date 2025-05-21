@@ -23,6 +23,14 @@ struct NoteListView: View {
                                 isTFAlertPresented = true
                             }
                             .tint(.blue)
+                            Button("削除", role: .destructive) {
+                                viewContext.delete(note)
+                                do {
+                                    try viewContext.save()
+                                } catch {
+                                    print("削除に失敗しました: \(error)")
+                                }
+                            }
                         }
                 }
                 .onDelete(perform: deleteNote)
@@ -87,7 +95,7 @@ extension NoteListView {
             // ここで CoreData から削除
             viewContext.delete(note)
         }
-
+        
         do {
             try viewContext.save()
         } catch {
