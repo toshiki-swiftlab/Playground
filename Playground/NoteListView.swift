@@ -9,11 +9,15 @@ struct NoteListView: View {
     @State private var editingNote: Note? = nil
     @State private var isTFAlertPresented = false
     @State private var alertTFText = ""
+    @State private var searchText = ""
     
     var body: some View {
         NavigationStack {
+            TextField("検索", text: $searchText)
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal)
             List {
-                ForEach(notes, id: \.objectID) { note in
+                ForEach(filteredNotes, id: \.objectID) { note in
                     Text(note.content ?? "")
                         .swipeActions(edge: .trailing) {
                             Button("編集") {
@@ -59,6 +63,16 @@ struct NoteListView: View {
                     Text("メモを入力してください！📝")
                 }
             )
+        }
+    }
+    
+    var filteredNotes: [Note] {
+        if searchText.isEmpty {
+            return Array(notes)
+        } else {
+            return notes.filter { note in
+                (note.content ?? "").localizedCaseInsensitiveContains(searchText)
+            }
         }
     }
 }
